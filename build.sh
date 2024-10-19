@@ -76,7 +76,7 @@ function build_for_apple() {
 function extract_all_headers() {
     cd $EXECUTORCH_DIR
     mkdir -p $EXECUTORCH_DIR/../target/executorch-prebuilt/include/executorch
-    # find . -name "*.h" -exec cp --parents {} $EXECUTORCH_DIR/../target/executorch-prebuilt/include/executorch \;
+    find . -name "*.h" -exec cp --parents {} $EXECUTORCH_DIR/../target/executorch-prebuilt/include/executorch \;
 }
 ###############################################################################
 # Parse command line arguments                                                #
@@ -202,8 +202,8 @@ elif [[ $TARGET_TRIPLE == "aarch64-apple-ios" ]]; then
     )
     TARGET_TRIPLES=(
         "aarch64-apple-darwin"
-        "arm64-apple-ios"
-        "arm64-apple-ios-sim"
+        "aarch64-apple-ios"
+        "aarch64-apple-ios-sim"
     )
 
     # Check the flatc executable is installed
