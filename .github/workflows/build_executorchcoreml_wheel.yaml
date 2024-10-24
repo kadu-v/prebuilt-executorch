@@ -33,7 +33,7 @@ jobs:
         shell: bash
         run: |
           ./build_executorchcoreml_wheel.sh
-
+          
       - name: Set the tag from TAG file to environment variable
         run: |
           export TAG=$(cat TAG)
