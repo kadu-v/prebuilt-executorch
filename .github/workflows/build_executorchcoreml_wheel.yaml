@@ -32,13 +32,8 @@ jobs:
       - name: Build ExecutorchCoreML Wheel
         shell: bash
         run: |
-          ./build_executorchcoreml_wheel.sh &&\
-          ls -la
-      
-      - name: Archive the wheel
-        run: |
-          zip -r executorchcoreml-wheel.zip out-coreml-wheel
-      
+          ./build_executorchcoreml_wheel.sh
+          
       - name: Set the tag from TAG file to environment variable
         run: |
           export TAG=$(cat TAG)
@@ -50,6 +45,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: executorchcoreml-wheel.zip
+          files: out-coreml-wheel/*.whl
           tag_name: ${{ env.TAG }}-wheel
 
