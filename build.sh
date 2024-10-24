@@ -215,6 +215,7 @@ elif [[ $TARGET_TRIPLE == "aarch64-apple-ios" ]]; then
     fi
 
     for index in ${!PLATFORMS[*]}; do
+        rm -rf $BUILD_DIR
         cd $EXECUTORCH_DIR
         build_for_apple \
             "${BUCK2_EXECUTABLE}" \
