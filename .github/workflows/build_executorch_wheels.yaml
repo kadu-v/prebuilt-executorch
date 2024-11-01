@@ -3,7 +3,7 @@ name: Build Executorch Wheel
 on:
   push:
     branches:
-      - feature/version
+      - main
 
 jobs:
   Build-coreml-wheel:
