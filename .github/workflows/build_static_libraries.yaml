@@ -129,7 +129,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+          
       - name: Download executorch-apple-debug
         uses: actions/download-artifact@v4
         with:
@@ -144,30 +144,22 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: executorch-android
-
-      - name: List files from executorch-apple and executorch-android
-        run: |
-          ls -al
-          echo "Files from executorch-apple:"
-          ls executorch-apple-debug
-          ls executorch-apple-release
-          echo "Files from executorch-android:"
-          ls executorch-android
-
-      - name: Create a zip of both artifacts
-        run: |
-          mkdir executorch-prebuilt
-          cp -r executorch-apple-debug/* executorch-prebuilt/
-          cp -r executorch-apple-release/* executorch-prebuilt/
-          cp -r executorch-android/* executorch-prebuilt/
-          zip -r release.zip executorch-prebuilt
-      
+        
       - name: Set the tag from TAG file to environment variable
         run: |
           export TAG=$(cat TAG)
           echo "TAG: $TAG"
           echo "TAG=${TAG}" >> $GITHUB_ENV
-          
+
+      - name: Create a zip of both artifacts
+        run: |
+          mkdir executorch-prebuilt-${TAG}
+          touch executorch-prebuilt-${TAG}/.gitkeep
+          # cp -r executorch-apple-debug/* executorch-prebuilt/
+          # cp -r executorch-apple-release/* executorch-prebuilt/
+          # cp -r executorch-android/* executorch-prebuilt
+          zip -r release-${TAG}.zip executorch-prebuilt-${TAG}
+      
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
         env:
