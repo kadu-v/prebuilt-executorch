@@ -155,9 +155,9 @@ jobs:
         run: |
           mkdir executorch-prebuilt-${TAG}
           touch executorch-prebuilt-${TAG}/.gitkeep
-          cp -r executorch-apple-debug/* executorch-prebuilt/
-          cp -r executorch-apple-release/* executorch-prebuilt/
-          cp -r executorch-android/* executorch-prebuilt
+          cp -r executorch-apple-debug/* executorch-prebuilt-${TAG}/
+          cp -r executorch-apple-release/* executorch-prebuilt-${TAG}/
+          cp -r executorch-android/* executorch-prebuilt-${TAG}/
           zip -r release-${TAG}.zip executorch-prebuilt-${TAG}
       
       - name: Upload release assets
