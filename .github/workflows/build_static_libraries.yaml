@@ -165,5 +165,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: release-${TAG}.zip
+          files: release-${{ env.TAG }}.zip
           tag_name: ${{ env.TAG }}
