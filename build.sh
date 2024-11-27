@@ -56,6 +56,7 @@ function build_for_apple() {
         -DEXECUTORCH_BUILD_KERNELS_CUSTOM=ON \
         -DEXECUTORCH_BUILD_KERNELS_OPTIMIZED=ON \
         -DEXECUTORCH_BUILD_KERNELS_QUANTIZED=ON \
+        -DEXECUTORCH_XNNPACK_ENABLE_KLEIDI=ON \
         -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY="$BUILD_DIR" \
         -DPLATFORM=$platform \
         -DDEPLOYMENT_TARGET=$platform_target
@@ -178,6 +179,7 @@ elif [[ $TARGET_TRIPLE == "aarch64-linux-android" ]]; then
         -DEXECUTORCH_BUILD_EXTENSION_TENSOR=ON \
         -DEXECUTORCH_BUILD_EXTENSION_MODULE=ON \
         -DEXECUTORCH_BUILD_EXTENSION_DATA_LOADER=ON \
+        -DEXECUTORCH_XNNPACK_ENABLE_KLEIDI=ON \
         -DPYTHON_EXECUTABLE=python \
         -DCMAKE_BUILD_TYPE=$BUILD_MODE
     cmake --build $BUILD_DIR -j$(nproc)
@@ -187,8 +189,8 @@ elif [[ $TARGET_TRIPLE == "aarch64-linux-android" ]]; then
     lower_mode=$(echo $BUILD_MODE | tr '[:upper:]' '[:lower:]')
     cmake --install $BUILD_DIR --prefix $EXECUTORCH_DIR/../target/executorch-prebuilt/$TARGET_TRIPLE/$lower_mode
 
-    println "Extract all headers from executorch and copy them to the include directory"
-    extract_all_headers
+    # println "Extract all headers from executorch and copy them to the include directory"
+    # extract_all_headers
 elif [[ $TARGET_TRIPLE == "aarch64-apple-ios" ]]; then
     PLATFORMS=(
         "MAC_ARM64"
