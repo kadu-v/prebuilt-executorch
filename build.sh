@@ -189,8 +189,8 @@ elif [[ $TARGET_TRIPLE == "aarch64-linux-android" ]]; then
     lower_mode=$(echo $BUILD_MODE | tr '[:upper:]' '[:lower:]')
     cmake --install $BUILD_DIR --prefix $EXECUTORCH_DIR/../target/executorch-prebuilt/$TARGET_TRIPLE/$lower_mode
 
-    # println "Extract all headers from executorch and copy them to the include directory"
-    # extract_all_headers
+    println "Extract all headers from executorch and copy them to the include directory"
+    extract_all_headers
 elif [[ $TARGET_TRIPLE == "aarch64-apple-ios" ]]; then
     PLATFORMS=(
         "MAC_ARM64"
