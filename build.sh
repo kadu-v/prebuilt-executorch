@@ -6,7 +6,7 @@ EXECUTORCH_DIR=$SCRIPT_DIR/executorch
 BUILD_DIR=$EXECUTORCH_DIR/cmake-out
 BUILD_MODE=Release
 NO_VENV=0
-
+DEVTOOLS=OFF
 
 ###############################################################################
 # Auxiliary functions                                                         #
@@ -17,6 +17,7 @@ function usage() {
     echo "--clean: clean the build directory"
     echo "--mode: build mode (e.g., Release, Debug)"
     echo "--no-venv: do not use pyenv"
+    echo "--devtools: build devtools"
 }
 
 function println() {
@@ -31,10 +32,11 @@ function build_for_apple() {
     local platform=$3
     local platform_target=$4
     local target_triple=$5
+    local install_dir=$6
 
     local TOOLCHAIN="${EXECUTORCH_DIR}/third-party/ios-cmake/ios.toolchain.cmake"
 
-    println "Building for ${TARGET_TRIPLES[$index]}"
+    println "Building for ${target_triple}"
     mkdir -p $BUILD_DIR && cd $BUILD_DIR || exit 1
     cmake $EXECUTORCH_DIR -G Xcode \
         -DCMAKE_BUILD_TYPE="$BUILD_MODE" \
@@ -57,6 +59,10 @@ function build_for_apple() {
         -DEXECUTORCH_BUILD_KERNELS_OPTIMIZED=ON \
         -DEXECUTORCH_BUILD_KERNELS_QUANTIZED=ON \
         -DEXECUTORCH_XNNPACK_ENABLE_KLEIDI=ON \
+        -DEXECUTORCH_BUILD_DEVTOOLS=$DEVTOOLS \
+        -DEXECUTORCH_ENABLE_EVENT_TRACER=$DEVTOOLS \
+        -Dprotobuf_BUILD_TESTS=OFF \
+        -Dprotobuf_BUILD_EXAMPLES=OFF \
         -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY="$BUILD_DIR" \
         -DPLATFORM=$platform \
         -DDEPLOYMENT_TARGET=$platform_target
@@ -66,18 +72,40 @@ function build_for_apple() {
         --config $BUILD_MODE \
         --verbose
     
-    println "Install all libraries to the target/executorch-prebuilt directory"
+    # build devtools
+    if [[ $DEVTOOLS == "ON" ]]; then
+        cmake --build . \
+            -j4 \
+            --config $BUILD_MODE \
+            --target coremldelegate
+        cmake --build . \
+            -j4 \
+            --config $BUILD_MODE \
+            --target etdump \
+            --target flatccrt
+    fi
+ 
+    println "Install all libraries to the ${install_dir} directory"
     lower_mode=$(echo $BUILD_MODE | tr '[:upper:]' '[:lower:]')
-    mkdir -p $EXECUTORCH_DIR/../target/executorch-prebuilt/$target_triple/$lower_mode
+    mkdir -p $install_dir
     cmake --install . \
         --config $BUILD_MODE \
-        --prefix $EXECUTORCH_DIR/../target/executorch-prebuilt/$target_triple/$lower_mode
+        --prefix $install_dir
+    
+    if [[ $DEVTOOLS == "ON" ]]; then
+        println "Copy devtools libraries to the target/executorch-prebuilt directory"
+        cp $BUILD_DIR/lib/*.a $install_dir/lib
+        # rename libfaltccrt_d.a to libfaltccrt.a
+        if [[ -f $install_dir/lib/libflatccrt_d.a ]]; then
+            mv $install_dir/lib/libflatccrt_d.a $install_dir/lib/libflatccrt.a
+        fi
+    fi
 }
 
 function extract_all_headers() {
     cd $EXECUTORCH_DIR
-    mkdir -p $EXECUTORCH_DIR/../target/executorch-prebuilt/include/executorch
-    find . -name "*.h" -exec cp --parents {} $EXECUTORCH_DIR/../target/executorch-prebuilt/include/executorch \;
+    # mkdir -p $EXECUTORCH_DIR/../target/executorch-prebuilt/include/executorch
+    # find . -name "*.h" -exec cp --parents {} $EXECUTORCH_DIR/../target/executorch-prebuilt/include/executorch \;
 }
 ###############################################################################
 # Parse command line arguments                                                #
@@ -88,6 +116,7 @@ for arg in "$@"; do
         --clean) CLEAN=1;;
         --mode=*) BUILD_MODE="${arg#*=}";;
         --no-venv) NO_VENV=1;;
+        --devtools) DEVTOOLS=ON;;
         *)
         echo "Invalid argument: $arg"
         exit 1
@@ -169,25 +198,45 @@ elif [[ $TARGET_TRIPLE == "aarch64-linux-android" ]]; then
         println "Please set the ANDROID_NDK_HOME environment variable"
         exit 1
     fi
-
+    LOWER_MODE=$(echo $BUILD_MODE | tr '[:upper:]' '[:lower:]')
+    INSTALL_DIR=$EXECUTORCH_DIR/../target/executorch-prebuilt/$TARGET_TRIPLE/$LOWER_MODE
+    if [[ $DEVTOOLS == "ON" ]]; then
+        INSTALL_DIR=$EXECUTORCH_DIR/../target/executorch-prebuilt/$TARGET_TRIPLE/devtools
+    fi
     cd $EXECUTORCH_DIR
     cmake . -B $BUILD_DIR \
         -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
         -DANDROID_ABI=arm64-v8a \
         -DEXECUTORCH_BUILD_VULKAN=ON \
         -DEXECUTORCH_BUILD_XNNPACK=ON \
-        -DEXECUTORCH_BUILD_EXTENSION_TENSOR=ON \
-        -DEXECUTORCH_BUILD_EXTENSION_MODULE=ON \
         -DEXECUTORCH_BUILD_EXTENSION_DATA_LOADER=ON \
+        -DEXECUTORCH_BUILD_EXTENSION_MODULE=ON \
+        -DEXECUTORCH_BUILD_EXTENSION_TENSOR=ON \
+        -DEXECUTORCH_BUILD_KERNELS_CUSTOM=ON \
+        -DEXECUTORCH_BUILD_KERNELS_OPTIMIZED=ON \
+        -DEXECUTORCH_BUILD_KERNELS_QUANTIZED=ON \
         -DEXECUTORCH_XNNPACK_ENABLE_KLEIDI=ON \
+        -DEXECUTORCH_BUILD_DEVTOOLS=$DEVTOOLS \
+        -DEXECUTORCH_ENABLE_EVENT_TRACER=$DEVTOOLS \
+        -Dprotobuf_BUILD_TESTS=OFF \
+        -Dprotobuf_BUILD_EXAMPLES=OFF \
         -DPYTHON_EXECUTABLE=python \
         -DCMAKE_BUILD_TYPE=$BUILD_MODE
     cmake --build $BUILD_DIR -j$(nproc)
 
-    println "Install all libraries to the target/executorch-prebuilt directory"
-    mkdir -p $EXECUTORCH_DIR/../target/executorch-prebuilt/$TARGET_TRIPLE/$lower_mode
-    lower_mode=$(echo $BUILD_MODE | tr '[:upper:]' '[:lower:]')
-    cmake --install $BUILD_DIR --prefix $EXECUTORCH_DIR/../target/executorch-prebuilt/$TARGET_TRIPLE/$lower_mode
+    mkdir -p $INSTALL_DIR
+    println "Install all libraries to the ${INSTALL_DIR} directory"
+    cmake --install $BUILD_DIR --prefix $INSTALL_DIR
+
+    if [[ $DEVTOOLS == "ON" ]]; then
+        println "Copy devtools libraries to the target/executorch-prebuilt directory"
+        cp $BUILD_DIR/lib/*.a $INSTALL_DIR/lib
+        # rename libfaltccrt_d.a to libfaltccrt.a
+        if [[ -f $INSTALL_DIR/lib/libflatccrt_d.a ]]; then
+            mv $INSTALL_DIR/lib/libflatccrt_d.a \
+                $INSTALL_DIR/lib/libflatccrt.a
+        fi
+    fi
 
     println "Extract all headers from executorch and copy them to the include directory"
     extract_all_headers
@@ -208,6 +257,18 @@ elif [[ $TARGET_TRIPLE == "aarch64-apple-ios" ]]; then
         "aarch64-apple-ios-sim"
     )
 
+    if [[ $DEVTOOLS == "ON" ]]; then
+        PLATFORMS=(
+            "MAC_ARM64"
+        )
+        PLATFORM_TARGETS=(
+            "10.15"
+        )
+        TARGET_TRIPLES=(
+            "aarch64-apple-darwin"
+        )
+    fi
+
     # Check the flatc executable is installed
     FLATC=$(which flatc)
     if [[ -z $FLATC ]]; then
@@ -219,12 +280,18 @@ elif [[ $TARGET_TRIPLE == "aarch64-apple-ios" ]]; then
     for index in ${!PLATFORMS[*]}; do
         rm -rf $BUILD_DIR
         cd $EXECUTORCH_DIR
+        LOWER_MODE=$(echo $BUILD_MODE | tr '[:upper:]' '[:lower:]')
+        INSTALL_DIR=$EXECUTORCH_DIR/../target/executorch-prebuilt/${TARGET_TRIPLES[$index]}/$LOWER_MODE
+        if [[ $DEVTOOLS == "ON" ]]; then
+            INSTALL_DIR=$EXECUTORCH_DIR/../target/executorch-prebuilt/${TARGET_TRIPLES[$index]}/devtools
+        fi
         build_for_apple \
             "${BUCK2_EXECUTABLE}" \
             "${FLATC}" \
             "${PLATFORMS[$index]}" \
             "${PLATFORM_TARGETS[$index]}" \
-            "${TARGET_TRIPLES[$index]}"
+            "${TARGET_TRIPLES[$index]}" \
+            "${INSTALL_DIR}"
     done
 
     println "Extract all headers from executorch and copy them to the include directory"
