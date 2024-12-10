@@ -161,7 +161,7 @@ jobs:
   Upload-Release:
     runs-on: ubuntu-latest
     environment: prod-deploy 
-    needs: [Build-aarch64-apple-debug, Build-aarch64-apple-release, Build-aarch64-android]
+    needs: [Build-aarch64-apple-debug, Build-aarch64-apple-release, Build-aarch64-apple-devtools, Build-aarch64-android]
     permissions: 
       contents: write 
     steps:
@@ -177,6 +177,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: executorch-apple-release
+      
+      - name: Download executorch-apple-devtools
+        uses: actions/download-artifact@v4
+        with:
+          name: executorch-apple-devtools
 
       - name: Download executorch-android
         uses: actions/download-artifact@v4
