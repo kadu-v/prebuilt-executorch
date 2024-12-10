@@ -104,8 +104,8 @@ function build_for_apple() {
 
 function extract_all_headers() {
     cd $EXECUTORCH_DIR
-    # mkdir -p $EXECUTORCH_DIR/../target/executorch-prebuilt/include/executorch
-    # find . -name "*.h" -exec cp --parents {} $EXECUTORCH_DIR/../target/executorch-prebuilt/include/executorch \;
+    mkdir -p $EXECUTORCH_DIR/../target/executorch-prebuilt/include/executorch
+    find . -name "*.h" -exec cp --parents {} $EXECUTORCH_DIR/../target/executorch-prebuilt/include/executorch \;
 }
 ###############################################################################
 # Parse command line arguments                                                #
