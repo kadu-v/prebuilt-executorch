@@ -6,101 +6,103 @@ on:
       - main
 
 jobs:
-  # Build-aarch64-apple-debug:
-  #   runs-on: macos-latest
-  #   environment: prod-deploy
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         submodules: 'recursive'
+  Build-aarch64-apple-debug:
+    runs-on: macos-latest
+    environment: prod-deploy
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
-  #     - name: Set up Python 3.12.5
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: 3.12.5
+      - name: Set up Python 3.12.5
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12.5
 
-  #     - name: Setup for Macos
-  #       shell: bash
-  #       run: ./setup_aarch64_macos.sh
+      - name: Setup for Macos
+        shell: bash
+        run: ./setup_aarch64_macos.sh
 
-  #     - name: Build Executroch library with Debug mode
-  #       shell: bash
-  #       run: ./build.sh --target=aarch64-apple-ios --mode=Debug --no-venv
+      - name: Build Executroch library with Debug mode
+        shell: bash
+        run: ./build.sh --target=aarch64-apple-ios --mode=Debug --no-venv
 
-  #     - name: Copy the prebuilt library to the executorch-apple directory
-  #       run: |
-  #         mkdir -p out-apple/executorch-apple-debug
-  #         cp -r target/executorch-prebuilt/* out-apple/executorch-apple-debug
+      - name: Copy the prebuilt library to the executorch-apple directory
+        run: |
+          mkdir -p out-apple/executorch-apple-debug
+          cp -r target/executorch-prebuilt/* out-apple/executorch-apple-debug
 
-  #     - name: Upload Built Library
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: executorch-apple-debug
-  #         path: out-apple
+      - name: Upload Built Library
+        uses: actions/upload-artifact@v4
+        with:
+          name: executorch-apple-debug
+          path: out-apple
 
-  # Build-aarch64-apple-release:
-  #   runs-on: macos-latest
-  #   environment: prod-deploy
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         submodules: 'recursive'
 
-  #     - name: Set up Python 3.12
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: 3.12
+  Build-aarch64-apple-release:
+    runs-on: macos-latest
+    environment: prod-deploy
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
-  #     - name: Setup for Macos
-  #       shell: bash
-  #       run: ./setup_aarch64_macos.sh
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
 
-  #     - name: Build Executroch library with Release mode
-  #       shell: bash
-  #       run: ./build.sh --target=aarch64-apple-ios --mode=Release --no-venv
+      - name: Setup for Macos
+        shell: bash
+        run: ./setup_aarch64_macos.sh
 
-  #     - name: Copy the prebuilt library to the executorch-apple directory
-  #       run: |
-  #         mkdir -p out-apple/executorch-apple-release
-  #         cp -r target/executorch-prebuilt/* out-apple/executorch-apple-release
+      - name: Build Executroch library with Release mode
+        shell: bash
+        run: ./build.sh --target=aarch64-apple-ios --mode=Release --no-venv
 
-  #     - name: Upload Built Library
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: executorch-apple-release
-  #         path: out-apple
+      - name: Copy the prebuilt library to the executorch-apple directory
+        run: |
+          mkdir -p out-apple/executorch-apple-release
+          cp -r target/executorch-prebuilt/* out-apple/executorch-apple-release
+
+      - name: Upload Built Library
+        uses: actions/upload-artifact@v4
+        with:
+          name: executorch-apple-release
+          path: out-apple
   
-  # Build-aarch64-apple-devtools:
-  #   runs-on: macos-latest
-  #   environment: prod-deploy
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         submodules: 'recursive'
 
-  #     - name: Set up Python 3.12
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: 3.12
+  Build-aarch64-apple-devtools:
+    runs-on: macos-latest
+    environment: prod-deploy
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
-  #     - name: Setup for Macos
-  #       shell: bash
-  #       run: ./setup_aarch64_macos.sh
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
 
-  #     - name: Build Executroch library with Devtools
-  #       shell: bash
-  #       run: ./build.sh --target=aarch64-apple-ios --mode=Release --no-venv --devtools
+      - name: Setup for Macos
+        shell: bash
+        run: ./setup_aarch64_macos.sh
 
-  #     - name: Copy the prebuilt library to the executorch-apple directory
-  #       run: |
-  #         mkdir -p out-apple/executorch-apple-devtools
-  #         cp -r target/executorch-prebuilt/* out-apple/executorch-apple-devtools
+      - name: Build Executroch library with Devtools
+        shell: bash
+        run: ./build.sh --target=aarch64-apple-ios --mode=Release --no-venv --devtools
 
-  #     - name: Upload Built Library
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: executorch-apple-devtools
-  #         path: out-apple
+      - name: Copy the prebuilt library to the executorch-apple directory
+        run: |
+          mkdir -p out-apple/executorch-apple-devtools
+          cp -r target/executorch-prebuilt/* out-apple/executorch-apple-devtools
+
+      - name: Upload Built Library
+        uses: actions/upload-artifact@v4
+        with:
+          name: executorch-apple-devtools
+          path: out-apple
 
   Build-aarch64-android:
     runs-on: ubuntu-latest
@@ -157,57 +159,56 @@ jobs:
           path: out-android
 
 
-
-  # Upload-Release:
-  #   runs-on: ubuntu-latest
-  #   environment: prod-deploy 
-  #   needs: [Build-aarch64-apple-debug, Build-aarch64-apple-release, Build-aarch64-apple-devtools, Build-aarch64-android]
-  #   permissions: 
-  #     contents: write 
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
+  Upload-Release:
+    runs-on: ubuntu-latest
+    environment: prod-deploy 
+    needs: [Build-aarch64-apple-debug, Build-aarch64-apple-release, Build-aarch64-apple-devtools, Build-aarch64-android]
+    permissions: 
+      contents: write 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
           
-  #     - name: Download executorch-apple-debug
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: executorch-apple-debug
+      - name: Download executorch-apple-debug
+        uses: actions/download-artifact@v4
+        with:
+          name: executorch-apple-debug
 
-  #     - name: Download executorch-apple-release
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: executorch-apple-release
+      - name: Download executorch-apple-release
+        uses: actions/download-artifact@v4
+        with:
+          name: executorch-apple-release
       
-  #     - name: Download executorch-apple-devtools
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: executorch-apple-devtools
+      - name: Download executorch-apple-devtools
+        uses: actions/download-artifact@v4
+        with:
+          name: executorch-apple-devtools
 
-  #     - name: Download executorch-android
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: executorch-android
+      - name: Download executorch-android
+        uses: actions/download-artifact@v4
+        with:
+          name: executorch-android
         
-  #     - name: Set the tag from TAG file to environment variable
-  #       run: |
-  #         export TAG=$(cat TAG)
-  #         echo "TAG: $TAG"
-  #         echo "TAG=${TAG}" >> $GITHUB_ENV
+      - name: Set the tag from TAG file to environment variable
+        run: |
+          export TAG=$(cat TAG)
+          echo "TAG: $TAG"
+          echo "TAG=${TAG}" >> $GITHUB_ENV
 
-  #     - name: Create a zip of both artifacts
-  #       run: |
-  #         mkdir executorch-prebuilt-${TAG}
-  #         touch executorch-prebuilt-${TAG}/.gitkeep
-  #         cp -r executorch-apple-debug/* executorch-prebuilt-${TAG}/
-  #         cp -r executorch-apple-release/* executorch-prebuilt-${TAG}/
-  #         cp -r executorch-apple-devtools/* executorch-prebuilt-${TAG}/
-  #         cp -r executorch-android/* executorch-prebuilt-${TAG}/
-  #         zip -r release-${TAG}.zip executorch-prebuilt-${TAG}
+      - name: Create a zip of both artifacts
+        run: |
+          mkdir executorch-prebuilt-${TAG}
+          touch executorch-prebuilt-${TAG}/.gitkeep
+          cp -r executorch-apple-debug/* executorch-prebuilt-${TAG}/
+          cp -r executorch-apple-release/* executorch-prebuilt-${TAG}/
+          cp -r executorch-apple-devtools/* executorch-prebuilt-${TAG}/
+          cp -r executorch-android/* executorch-prebuilt-${TAG}/
+          zip -r release-${TAG}.zip executorch-prebuilt-${TAG}
       
-  #     - name: Upload release assets
-  #       uses: softprops/action-gh-release@v2
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         files: release-${{ env.TAG }}.zip
-  #         tag_name: ${{ env.TAG }}
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: release-${{ env.TAG }}.zip
+          tag_name: ${{ env.TAG }}
