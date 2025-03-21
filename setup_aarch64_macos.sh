@@ -6,7 +6,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 sed -i '' "s/torch==2.7.0\.{NIGHTLY_VERSION}/torch==2.7.0.dev20250310/g" "$SCRIPT_DIR/executorch/install_requirements.py"
 
 # Install dependencies
-$SCRIPT_DIR/executorch/install_requirements.sh
+$SCRIPT_DIR/executorch/install_requirements.sh --use-pt-pinned-commit
 $SCRIPT_DIR/executorch/install_executorch.sh --pybind coreml mps xnnpack 
 $SCRIPT_DIR/executorch/backends/apple/coreml/scripts/install_requirements.sh
 $SCRIPT_DIR/executorch/backends/apple/mps/install_requirements.sh
