@@ -40,7 +40,7 @@ jobs:
           echo "TAG: $TAG"
           echo "TAG=${TAG}" >> $GITHUB_ENV
       
-      - name: Upload executorchcoreml wheel
+      - name: Upload executorch wheel
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
