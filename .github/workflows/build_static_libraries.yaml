@@ -3,6 +3,7 @@ name: Build Static Libraries
 on:
   push:
     branches:
+      - main
 
 jobs:
   Build-aarch64-apple-debug:
