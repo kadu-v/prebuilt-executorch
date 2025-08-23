@@ -4,6 +4,7 @@
 
 | prebuilt-executorch version | torch version     | torchvision version | torchao version |
 | --------------------------- | ----------------- | ------------------- | --------------- |
+| 0.7.0-wheel                 | 2.8.0             | 0.23.0              | 0.8.0           |
 | 0.6.0-wheel                 | 2.7.0             | 0.22.0              | 0.7.0           |
 | 0.6.0a0ce7aedf9-wheel       | 2.7.0.dev20250311 | 0.22.0.dev20250311  | 0.7.0           |
 | 0.5.0-wheel                 | 2.6.0             | 0.21.0              | 0.7.0           |
