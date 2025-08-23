@@ -7,4 +7,5 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     cd $SCRIPT_DIR/executorch
     ./install_requirements.sh 
     ./install_executorch.sh --use-pt-pinned-commit 
+    ./backends/apple/coreml/scripts/install_requirements.sh
 )
