@@ -55,6 +55,7 @@ function build_for_apple() {
         -DEXECUTORCH_BUILD_EXTENSION_APPLE=ON \
         -DEXECUTORCH_BUILD_EXTENSION_DATA_LOADER=ON \
         -DEXECUTORCH_BUILD_EXTENSION_MODULE=ON \
+        -DEXECUTORCH_BUILD_EXTENSION_NAMED_DATA_MAP=ON \
         -DEXECUTORCH_BUILD_EXTENSION_FLAT_TENSOR=ON \
         -DEXECUTORCH_BUILD_EXTENSION_TENSOR=ON \
         -DEXECUTORCH_BUILD_KERNELS_CUSTOM=ON \
@@ -86,20 +87,14 @@ function build_for_apple() {
             --target flatccrt
     fi
  
-    println "Install all libraries to the ${install_dir} directory"
+    println "Copy all libraries to the ${install_dir} directory"
     lower_mode=$(echo $BUILD_MODE | tr '[:upper:]' '[:lower:]')
-    mkdir -p $install_dir
-    cmake --install . \
-        --config $BUILD_MODE \
-        --prefix $install_dir
+    mkdir -p $install_dir/lib
+    cp "./$BUILD_MODE"/*.a "$install_dir/lib"
     
     if [[ $DEVTOOLS == "ON" ]]; then
         println "Copy devtools libraries to the target/executorch-prebuilt directory"
-        cp $BUILD_DIR/lib/*.a $install_dir/lib
-        # rename libfaltccrt_d.a to libfaltccrt.a
-        if [[ -f $install_dir/lib/libflatccrt_d.a ]]; then
-            mv $install_dir/lib/libflatccrt_d.a $install_dir/lib/libflatccrt.a
-        fi
+        cp ./third-party/flatcc_ep/lib/libflatccrt.a $install_dir/lib/libflatccrt.a
     fi
 }
 
@@ -144,6 +139,7 @@ if [[ $(uname) == "Darwin" ]]; then
     fi
 
     println "Checking buck2 version"
+    mkdir -p ${SCRIPT_DIR}/executorch/buck-out
     BUCK2_VERSION=$(cat ${SCRIPT_DIR}/executorch/.ci/docker/ci_commit_pins/buck2.txt)
     BUCK2_EXECUTABLE="${SCRIPT_DIR}/executorch/buck-out/buck2-aarch64-apple-darwin"
     if [[ ! -f "${BUCK2_EXECUTABLE}" ]]; then
@@ -183,7 +179,7 @@ if [[ $TARGET_TRIPLE == "aarch64-unknown-linux-gnu" ]] || [[ $TARGET_TRIPLE == "
             -DEXECUTORCH_BUILD_EXECUTOR_RUNNER=OFF \
             -DCMAKE_BUILD_TYPE=$BUILD_MODE 
         cd $BUILD_DIR
-        make -j$(nproc)
+        cmake --build . -j$(nproc)
 
         println "Install all libraries to the target/executorch-prebuilt directory"
         lower_mode=$(echo $BUILD_MODE | tr '[:upper:]' '[:lower:]')
@@ -215,6 +211,7 @@ elif [[ $TARGET_TRIPLE == "aarch64-linux-android" ]]; then
         -DEXECUTORCH_XNNPACK_SHARED_WORKSPACE=ON \
         -DEXECUTORCH_BUILD_EXTENSION_DATA_LOADER=ON \
         -DEXECUTORCH_BUILD_EXTENSION_MODULE=ON \
+        -DEXECUTORCH_BUILD_EXTENSION_NAMED_DATA_MAP=ON \
         -DEXECUTORCH_BUILD_EXTENSION_FLAT_TENSOR=ON \
         -DEXECUTORCH_BUILD_EXTENSION_TENSOR=ON \
         -DEXECUTORCH_BUILD_KERNELS_CUSTOM=ON \
@@ -229,17 +226,13 @@ elif [[ $TARGET_TRIPLE == "aarch64-linux-android" ]]; then
     cmake --build $BUILD_DIR -j$(nproc)
 
     mkdir -p $INSTALL_DIR
-    println "Install all libraries to the ${INSTALL_DIR} directory"
-    cmake --install $BUILD_DIR --prefix $INSTALL_DIR
-
+    println "Copy all libraries to the ${INSTALL_DIR} directory"
+    mkdir -p $install_dir/lib
+    cp "./$BUILD_MODE"/*.a "$install_dir/lib"
+    
     if [[ $DEVTOOLS == "ON" ]]; then
         println "Copy devtools libraries to the target/executorch-prebuilt directory"
-        cp $BUILD_DIR/lib/*.a $INSTALL_DIR/lib
-        # rename libfaltccrt_d.a to libfaltccrt.a
-        if [[ -f $INSTALL_DIR/lib/libflatccrt_d.a ]]; then
-            mv $INSTALL_DIR/lib/libflatccrt_d.a \
-                $INSTALL_DIR/lib/libflatccrt.a
-        fi
+        cp ./third-party/flatcc_ep/lib/libflatccrt.a $install_dir/lib/libflatccrt.a
     fi
 
     println "Extract all headers from executorch and copy them to the include directory"
