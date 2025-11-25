@@ -128,14 +128,10 @@ jobs:
         shell: bash
         run: ./setup_amd64_linux.sh
       
-      - name: Setup Vulkan SDK
+      - name: Setup Vulkan SDK and Build Executroch library with Debug mode
         shell: bash
         run: |
           source executorch/.ci/scripts/setup-vulkan-linux-deps.sh
-          
-      - name: Build Executroch library with Debug mode
-        shell: bash
-        run: |
           ./build.sh --target=aarch64-linux-android --mode=Debug --no-venv
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
