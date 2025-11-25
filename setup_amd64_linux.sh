@@ -6,5 +6,3 @@ $SCRIPT_DIR/executorch/install_requirements.sh
 $SCRIPT_DIR/executorch/install_executorch.sh --use-pt-pinned-commit 
 
 
-# Install Vulkan SDK
-source executorch/.ci/scripts/setup-vulkan-linux-deps.sh

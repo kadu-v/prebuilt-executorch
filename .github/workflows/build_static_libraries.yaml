@@ -127,7 +127,12 @@ jobs:
       - name: Setup for Linux
         shell: bash
         run: ./setup_amd64_linux.sh
-
+      
+      - name: Setup Vulkan SDK
+        shell: bash
+        run: |
+          source executorch/.ci/scripts/setup-vulkan-linux-deps.sh
+          
       - name: Build Executroch library with Debug mode
         shell: bash
         run: |
