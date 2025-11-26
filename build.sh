@@ -205,6 +205,7 @@ elif [[ $TARGET_TRIPLE == "aarch64-linux-android" ]]; then
     cmake . -B $BUILD_DIR \
         -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
         -DANDROID_ABI=arm64-v8a \
+        -DEXECUTORCH_BUILD_VULKAN=ON \
         -DEXECUTORCH_BUILD_XNNPACK=ON \
         -DEXECUTORCH_XNNPACK_ENABLE_KLEIDI=ON \
         -DEXECUTORCH_XNNPACK_SHARED_WORKSPACE=ON \
