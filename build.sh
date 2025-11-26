@@ -205,7 +205,6 @@ elif [[ $TARGET_TRIPLE == "aarch64-linux-android" ]]; then
     cmake . -B $BUILD_DIR \
         -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
         -DANDROID_ABI=arm64-v8a \
-        -DEXECUTORCH_BUILD_VULKAN=ON \
         -DEXECUTORCH_BUILD_XNNPACK=ON \
         -DEXECUTORCH_XNNPACK_ENABLE_KLEIDI=ON \
         -DEXECUTORCH_XNNPACK_SHARED_WORKSPACE=ON \
@@ -226,13 +225,17 @@ elif [[ $TARGET_TRIPLE == "aarch64-linux-android" ]]; then
     cmake --build $BUILD_DIR -j$(nproc)
 
     mkdir -p $INSTALL_DIR
-    println "Copy all libraries to the ${INSTALL_DIR} directory"
-    mkdir -p $install_dir/lib
-    cp "./$BUILD_MODE"/*.a "$install_dir/lib"
-    
+    println "Install all libraries to the ${INSTALL_DIR} directory"
+    cmake --install $BUILD_DIR --prefix $INSTALL_DIR
+
     if [[ $DEVTOOLS == "ON" ]]; then
         println "Copy devtools libraries to the target/executorch-prebuilt directory"
-        cp ./third-party/flatcc_ep/lib/libflatccrt.a $install_dir/lib/libflatccrt.a
+        cp $BUILD_DIR/lib/*.a $INSTALL_DIR/lib
+        # rename libfaltccrt_d.a to libfaltccrt.a
+        if [[ -f $INSTALL_DIR/lib/libflatccrt_d.a ]]; then
+            mv $INSTALL_DIR/lib/libflatccrt_d.a \
+                $INSTALL_DIR/lib/libflatccrt.a
+        fi
     fi
 
     println "Extract all headers from executorch and copy them to the include directory"
