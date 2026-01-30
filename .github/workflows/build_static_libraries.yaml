@@ -138,7 +138,9 @@ jobs:
 
       - name: Build Executroch library with Release mode
         shell: bash
-        run: ./build.sh --target=aarch64-linux-android --mode=Release --no-venv
+        run: |
+          source executorch/.ci/scripts/setup-vulkan-linux-deps.sh
+          ./build.sh --target=aarch64-linux-android --mode=Release --no-venv
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
 
