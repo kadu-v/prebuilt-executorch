@@ -26,6 +26,13 @@ function println() {
     echo "###############################################################################"
 }
 
+function remove_build_dir() {
+    if [[ -d "$BUILD_DIR" ]]; then
+        println "Removing build directory: $BUILD_DIR"
+        rm -rf "$BUILD_DIR"
+    fi
+}
+
 function build_for_apple() {
     local buck2=$1
     local flatc=$2
@@ -191,6 +198,8 @@ if [[ $TARGET_TRIPLE == "aarch64-unknown-linux-gnu" ]] || [[ $TARGET_TRIPLE == "
     )
 elif [[ $TARGET_TRIPLE == "aarch64-linux-android" ]]; then
     println "Building for ${TARGET_TRIPLE}"
+
+    remove_build_dir
     
     if [[ -z $ANDROID_NDK_HOME ]]; then
         println "Please set the ANDROID_NDK_HOME environment variable"
